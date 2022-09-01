@@ -1,0 +1,9 @@
+{
+  "dependencies": {
+    "axios": "^0.27.2",
+    "@google-cloud/firestore": "^6.0.0",
+    "@google-cloud/workflows": "^2.0.0",
+    "@google-cloud/compute": "^3.3.0",
+    "@octokit/rest": "^19.0.3"
+  }
+}

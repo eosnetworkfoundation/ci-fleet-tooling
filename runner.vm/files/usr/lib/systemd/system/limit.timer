@@ -1,0 +1,9 @@
+[Unit]
+Description=Limit uptime to this
+
+[Timer]
+OnBootSec=60m
+Unit=poweroff.target
+
+[Install]
+WantedBy=timers.target

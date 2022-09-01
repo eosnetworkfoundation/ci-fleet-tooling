@@ -1,0 +1,77 @@
+main:
+    params: [args]
+    steps:
+    - checkRequiredInputs:
+        switch:
+            - condition: ${not ("zones" in args) or not ("instanceTemplate" in args) or not ("instanceName" in args) or not ("maxRuntime" in args)}
+              steps:
+                - errorOut:
+                   raise: "Required arguments not present"
+            - condition: ${not ("metadata" in args)}
+              assign:
+                - args["metadata"]: {}
+    - initVariables:
+        assign:
+            - project: ${sys.get_env("GOOGLE_CLOUD_PROJECT_ID")}
+            - zone: null
+    - launchRetryLoop:
+        for:
+            value: tryzone
+            in: ${args.zones}
+            steps:
+                - tryLaunch:
+                    try:
+                        call: googleapis.compute.v1.instances.insert
+                        args:
+                            project: ${project}
+                            zone: ${tryzone}
+                            sourceInstanceTemplate: ${"projects/" + project + "/global/instanceTemplates/" + args.instanceTemplate}
+                            body:
+                                name: ${args.instanceName}
+                                metadata:
+                                    items: ${args.metadata}
+                        result: instance
+                    except:
+                        steps:
+                            - keepTryingLaunch:
+                                next: continue
+                - assignZone:
+                    assign:
+                        - zone: ${tryzone}
+                    next: break
+    - verifyLaunched:
+         switch:
+          - condition: ${zone == null}
+            steps:
+                - waitToRetry:
+                    call: sys.sleep
+                    args:
+                        seconds: 60
+                    next: launchRetryLoop
+    - whenStart:
+        call: sys.now
+        result: startTime
+    - getStatus:
+        call: googleapis.compute.v1.instances.get
+        args:
+            instance: ${args.instanceName}
+            project: ${project}
+            zone: ${zone}
+        result: instance
+    - compare:
+        switch:
+          - condition: ${instance.status == "TERMINATED"}
+            next: deleteIt
+          - condition: ${sys.now() > startTime+args.maxRuntime}
+            next: deleteIt
+    - sleepy:
+        call: sys.sleep
+        args:
+            seconds: 30
+        next: getStatus
+    - deleteIt:
+        call: googleapis.compute.v1.instances.delete
+        args:
+            instance: ${args.instanceName}
+            project: ${project}
+            zone: ${zone}

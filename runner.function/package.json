@@ -1,0 +1,8 @@
+{
+  "dependencies": {
+    "@google-cloud/functions-framework": "^3.1.2",
+    "@google-cloud/workflows": "^2.0.0",
+    "@octokit/rest": "^19.0.3",
+    "axios": "^0.27.2"
+  }
+}

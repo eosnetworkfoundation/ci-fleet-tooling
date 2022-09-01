@@ -1,0 +1,16 @@
+[Unit]
+Requires=network-online.target docker.service
+After=network-online.target docker.service
+OnFailure=poweroff.target
+OnSuccess=poweroff.target
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/runner.sh
+User=enf
+WorkingDirectory=~
+StandardOutput=journal+console
+StandardError=journal+console
+
+[Install]
+WantedBy=multi-user.target

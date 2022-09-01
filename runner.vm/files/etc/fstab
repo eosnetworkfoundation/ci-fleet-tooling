@@ -1,0 +1,2 @@
+tmpfs /var/lib/docker tmpfs defaults,uid=root,gid=root 0 0
+tmpfs /home/enf tmpfs defaults,uid=enf,gid=enf 0 0

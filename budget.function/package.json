@@ -1,0 +1,6 @@
+{
+   "dependencies": {
+     "@google-cloud/pubsub": "^0.18.0",
+     "@google-cloud/firestore": "^6.0.0"
+   }
+}
