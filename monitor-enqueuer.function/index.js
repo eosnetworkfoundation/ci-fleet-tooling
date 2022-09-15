@@ -17,7 +17,7 @@ async function get_identity() {
    return (await axios.get("http://metadata.google.internal/computeMetadata/v1/instance/service-accounts/default/email", {responseType:"text", headers:{"Metadata-Flavor": "Google"}})).data;
 }
 
-async function doit(complete) {
+async function doit() {
    if(Object.keys(meta).length == 0)
       ({0:meta.project, 1:meta.region, 2:meta.identity} = await Promise.all([get_project(), get_region(), get_identity()]));
 
@@ -40,9 +40,8 @@ async function doit(complete) {
    });
 
    await Promise.all(createPromises);
-   complete();
 }
 
-exports.enqueueit = (event, context, complete) => {
-  doit(complete);
+exports.enqueueit = async (event, context) => {
+  return doit();
 };
