@@ -3,6 +3,7 @@ RUN pacman -Syyu --noconfirm && pacman --noconfirm -S mkinitcpio
 RUN sed -i 's/MODULES=()/MODULES=(ext4 virtio virtio_pci virtio_net virtio_scsi)/' /etc/mkinitcpio.conf
 RUN pacman --noconfirm -S dhcpcd \
                           docker \
+                          docker-buildx \
                           git \
                           jq \
                           linux
