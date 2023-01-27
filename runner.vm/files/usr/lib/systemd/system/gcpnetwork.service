@@ -4,8 +4,9 @@ Before=network-online.target
 OnFailure=poweroff.target
 
 [Service]
-Type=simple
+Type=oneshot
 ExecStart=/usr/local/sbin/network.sh
+RemainAfterExit=yes
 StandardOutput=journal+console
 StandardError=journal+console
 

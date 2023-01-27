@@ -5,7 +5,7 @@ OnFailure=poweroff.target
 OnSuccess=poweroff.target
 
 [Service]
-Type=simple
+Type=oneshot
 ExecStart=/usr/local/bin/runner.sh
 User=enf
 WorkingDirectory=~

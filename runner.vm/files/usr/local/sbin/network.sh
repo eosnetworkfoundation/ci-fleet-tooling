@@ -19,6 +19,12 @@ sysctl -q -w net.ipv6.conf.eth0.disable_ipv6=1
 ip addr add 169.254.0.0/16 dev eth0
 ip link set eth0 up
 
+tries=100
+until eval '(( $(< /sys/class/net/eth0/carrier) ))'; do
+   (( tries-- > 0 )) || exit 1
+   sleep 0.1
+done
+
 echo $(get_metadata name) > /proc/sys/kernel/hostname
 
 IP=$(get_metadata network-interfaces/0/ip)
