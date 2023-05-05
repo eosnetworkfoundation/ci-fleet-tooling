@@ -1,13 +1,12 @@
 FROM archlinux AS builder
-RUN pacman -Syyu --noconfirm && pacman --noconfirm -S mkinitcpio
-RUN sed -i 's/MODULES=()/MODULES=(ext4 virtio virtio_pci virtio_net virtio_scsi)/' /etc/mkinitcpio.conf
-RUN pacman --noconfirm -S dhcpcd \
-                          docker \
+COPY files/ /
+RUN pacman -Syyu --noconfirm
+RUN pacman --noconfirm -S docker \
                           docker-buildx \
                           git \
                           jq \
-                          linux
-COPY files/ /
+                          linux \
+                          mkinitcpio
 
 RUN systemctl enable gcpnetwork.service docker.service runner.service limit.timer
 RUN systemctl disable systemd-networkd systemd-timesyncd systemd-resolved
@@ -22,6 +21,4 @@ RUN truncate -s ${ROOT_PART_SIZE}MiB /rootfs.raw && mkfs.ext4 -E lazy_itable_ini
 
 FROM scratch AS exportfs
 COPY --from=buildfs /rootfs.raw /
-COPY --from=builder /boot/initramfs-linux.img /
-COPY --from=builder /boot/vmlinuz-linux /
-COPY --from=builder /usr/lib/systemd/boot/efi/linuxx64.efi.stub /
+COPY --from=builder /boot/arch.efi /
