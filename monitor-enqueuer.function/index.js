@@ -22,7 +22,7 @@ async function doit() {
       ({0:meta.project, 1:meta.region, 2:meta.identity} = await Promise.all([get_project(), get_region(), get_identity()]));
 
    let createPromises = [];
-   [0, 10, 20, 30, 40, 50].forEach((offset) => {
+   [0, 15, 30, 45].forEach((offset) => {
       createPromises.push(client.createTask({
          parent: client.queuePath(meta.project, meta.region, process.env.TASK_QUEUE),
          task: {
